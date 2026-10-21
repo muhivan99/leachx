@@ -23,7 +23,7 @@ local CONFIG = {
     --   } }
     -- expires = waktu kedaluwarsa (unix detik, opsional)
     -- games   = batasi key ke GameId/PlaceId tertentu (opsional)
-    KeysUrl = "https://raw.githubusercontent.com/USERNAME/REPO/main/keys.json",
+    KeysUrl = "https://raw.githubusercontent.com/muhivan99/leachx/refs/heads/main/keys.json",
 
     -- Cadangan tanpa file JSON (tidak disarankan, key terbaca di dalam script)
     StaticKeys = {},
