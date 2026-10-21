@@ -79,15 +79,18 @@ local HttpService      = game:GetService("HttpService")
 local CoreGui          = game:GetService("CoreGui")
 
 local THEME = {
-    Bg      = Color3.fromRGB(14, 14, 20),
-    Panel   = Color3.fromRGB(24, 24, 34),
-    Field   = Color3.fromRGB(32, 32, 46),
-    Text    = Color3.fromRGB(235, 235, 245),
-    Muted   = Color3.fromRGB(140, 140, 165),
-    AccentA = Color3.fromRGB(0, 224, 176),
-    AccentB = Color3.fromRGB(122, 90, 255),
-    Good    = Color3.fromRGB(80, 220, 140),
-    Bad     = Color3.fromRGB(255, 90, 100),
+    Bg      = Color3.fromRGB(11, 12, 24),
+    Bg2     = Color3.fromRGB(26, 16, 52),
+    Panel   = Color3.fromRGB(21, 23, 42),
+    Field   = Color3.fromRGB(30, 33, 58),
+    FieldHi = Color3.fromRGB(38, 42, 72),
+    Text    = Color3.fromRGB(238, 241, 255),
+    Muted   = Color3.fromRGB(132, 138, 176),
+    AccentA = Color3.fromRGB(0, 235, 190),
+    AccentB = Color3.fromRGB(122, 92, 255),
+    AccentC = Color3.fromRGB(255, 94, 196),
+    Good    = Color3.fromRGB(90, 235, 165),
+    Bad     = Color3.fromRGB(255, 96, 118),
 }
 
 local function new(class, props, children)
@@ -112,7 +115,11 @@ local function corner(r) return new("UICorner", { CornerRadius = UDim.new(0, r) 
 local function gradient(rot)
     return new("UIGradient", {
         Rotation = rot or 0,
-        Color = ColorSequence.new(THEME.AccentA, THEME.AccentB),
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, THEME.AccentA),
+            ColorSequenceKeypoint.new(0.5, THEME.AccentB),
+            ColorSequenceKeypoint.new(1, THEME.AccentC),
+        }),
     })
 end
 
@@ -273,9 +280,25 @@ local main = new("Frame", {
     BorderSizePixel = 0,
     ClipsDescendants = true,
     Parent = gui,
-}, { corner(14) })
+}, { corner(16) })
 
--- Garis tepi bergradasi yang berputar
+-- Latar bergradasi (lapisan terpisah supaya garis tepi tidak ikut berubah warna)
+new("Frame", {
+    Name = "Bg",
+    Size = UDim2.fromScale(1, 1),
+    BackgroundColor3 = Color3.new(1, 1, 1),
+    BorderSizePixel = 0,
+    ZIndex = 1,
+    Parent = main,
+}, {
+    corner(16),
+    new("UIGradient", {
+        Rotation = 125,
+        Color = ColorSequence.new(THEME.Bg2, THEME.Bg),
+    }),
+})
+
+-- Garis tepi bergradasi yang berputar dan berdenyut
 local stroke = new("UIStroke", {
     Thickness = 2,
     Color = Color3.new(1, 1, 1),
@@ -292,47 +315,133 @@ local H = 330
 
 tween(main, 0.55, { Size = UDim2.fromOffset(W, H) }, Enum.EasingStyle.Back)
 
--- Header
-local title = new("TextLabel", {
+-- Partikel yang melayang pelan di latar
+local fx = new("Frame", {
+    Name = "FX",
     BackgroundTransparency = 1,
-    Position = UDim2.fromOffset(20, 14),
-    Size = UDim2.new(1, -60, 0, 34),
-    Font = Enum.Font.GothamBlack,
-    Text = CONFIG.Name,
-    TextSize = 28,
-    TextColor3 = Color3.new(1, 1, 1),
-    TextXAlignment = Enum.TextXAlignment.Left,
+    Size = UDim2.fromScale(1, 1),
+    ZIndex = 2,
     Parent = main,
 })
-gradient(0).Parent = title
+local particleColors = { THEME.AccentA, THEME.AccentB, THEME.AccentC }
+local particles = {}
+for i = 1, 16 do
+    local size = math.random(2, 4)
+    local f = new("Frame", {
+        Size = UDim2.fromOffset(size, size),
+        BackgroundColor3 = particleColors[(i % #particleColors) + 1],
+        BackgroundTransparency = 0.55 + math.random() * 0.3,
+        BorderSizePixel = 0,
+        ZIndex = 2,
+        Parent = fx,
+    }, { new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
+    particles[i] = {
+        f = f,
+        x = math.random(14, math.floor(W) - 14),
+        y = math.random(14, H - 14),
+        speed = 8 + math.random() * 14,
+        phase = math.random() * 6.28,
+    }
+end
+
+-- Bagian-bagian panel yang masuk satu per satu saat dibuka
+local function group()
+    return new("Frame", {
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Size = UDim2.fromScale(1, 1),
+        Position = UDim2.fromOffset(0, 16),
+        ZIndex = 3,
+        Parent = main,
+    })
+end
+
+local gHeader, gKey, gVerify, gProv = group(), group(), group(), group()
+
+local function reveal(g, delay)
+    task.delay(delay, function()
+        if g.Parent then
+            tween(g, 0.5, { Position = UDim2.fromOffset(0, 0) }, Enum.EasingStyle.Back)
+        end
+    end)
+end
+
+reveal(gHeader, 0.18)
+reveal(gKey, 0.28)
+reveal(gVerify, 0.38)
+reveal(gProv, 0.48)
+
+-- Header: lencana, judul, status game
+local badge = new("Frame", {
+    Position = UDim2.fromOffset(20, 14),
+    Size = UDim2.fromOffset(40, 40),
+    BackgroundColor3 = Color3.new(1, 1, 1),
+    BorderSizePixel = 0,
+    Parent = gHeader,
+}, { corner(12) })
+local badgeGrad = gradient(45)
+badgeGrad.Parent = badge
 
 new("TextLabel", {
     BackgroundTransparency = 1,
-    Position = UDim2.fromOffset(21, 46),
-    Size = UDim2.new(1, -60, 0, 16),
-    Font = Enum.Font.Gotham,
+    Size = UDim2.fromScale(1, 1),
+    Font = Enum.Font.GothamBlack,
+    Text = "L",
+    TextSize = 22,
+    TextColor3 = THEME.Bg,
+    Parent = badge,
+})
+
+local title = new("TextLabel", {
+    BackgroundTransparency = 1,
+    Position = UDim2.fromOffset(70, 11),
+    Size = UDim2.new(1, -120, 0, 28),
+    Font = Enum.Font.GothamBlack,
+    Text = CONFIG.Name,
+    TextSize = 26,
+    TextColor3 = Color3.new(1, 1, 1),
+    TextXAlignment = Enum.TextXAlignment.Left,
+    Parent = gHeader,
+})
+local titleGrad = gradient(0)
+titleGrad.Parent = title
+
+local dot = new("Frame", {
+    Position = UDim2.fromOffset(71, 46),
+    Size = UDim2.fromOffset(8, 8),
+    BackgroundColor3 = target and THEME.Good or THEME.Bad,
+    BorderSizePixel = 0,
+    Parent = gHeader,
+}, { new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
+
+new("TextLabel", {
+    BackgroundTransparency = 1,
+    Position = UDim2.fromOffset(86, 40),
+    Size = UDim2.new(1, -130, 0, 20),
+    Font = Enum.Font.GothamMedium,
     Text = (target and target.Name or "Game belum didukung") .. "  •  v" .. CONFIG.Version,
     TextSize = 12,
     TextColor3 = THEME.Muted,
     TextXAlignment = Enum.TextXAlignment.Left,
-    Parent = main,
+    TextTruncate = Enum.TextTruncate.AtEnd,
+    Parent = gHeader,
 })
 
 local close = new("TextButton", {
     AnchorPoint = Vector2.new(1, 0),
-    Position = UDim2.new(1, -14, 0, 14),
-    Size = UDim2.fromOffset(28, 28),
+    Position = UDim2.new(1, -16, 0, 16),
+    Size = UDim2.fromOffset(30, 30),
     BackgroundColor3 = THEME.Panel,
     Text = "×",
     Font = Enum.Font.GothamBold,
     TextSize = 20,
     TextColor3 = THEME.Muted,
     AutoButtonColor = false,
-    Parent = main,
-}, { corner(8) })
+    Parent = gHeader,
+}, { corner(9) })
 
 -- Label bagian
-local function sectionLabel(text, y)
+local function sectionLabel(text, y, parent)
     return new("TextLabel", {
         BackgroundTransparency = 1,
         Position = UDim2.fromOffset(20, y),
@@ -342,19 +451,33 @@ local function sectionLabel(text, y)
         TextSize = 11,
         TextColor3 = THEME.Muted,
         TextXAlignment = Enum.TextXAlignment.Left,
-        Parent = main,
+        Parent = parent,
     })
 end
 
 -- Input key
-sectionLabel("Masukkan key", 82)
+sectionLabel("Masukkan key", 82, gKey)
+
+-- Cincin cahaya yang menyala saat kolom key dipilih
+local fieldGlow = new("Frame", {
+    Position = UDim2.fromOffset(17, 99),
+    Size = UDim2.new(1, -34, 0, 50),
+    BackgroundColor3 = Color3.new(1, 1, 1),
+    BackgroundTransparency = 1,
+    BorderSizePixel = 0,
+    ZIndex = 1,
+    Parent = gKey,
+}, { corner(13) })
+local glowGrad = gradient(0)
+glowGrad.Parent = fieldGlow
 
 local keyField = new("Frame", {
     Position = UDim2.fromOffset(20, 102),
     Size = UDim2.new(1, -40, 0, 44),
     BackgroundColor3 = THEME.Field,
     BorderSizePixel = 0,
-    Parent = main,
+    ZIndex = 2,
+    Parent = gKey,
 }, { corner(10) })
 
 local fieldStroke = new("UIStroke", {
@@ -379,8 +502,16 @@ local keyBox = new("TextBox", {
     Parent = keyField,
 })
 
-keyBox.Focused:Connect(function() tween(fieldStroke, 0.2, { Color = THEME.AccentA }) end)
-keyBox.FocusLost:Connect(function() tween(fieldStroke, 0.2, { Color = THEME.Field }) end)
+keyBox.Focused:Connect(function()
+    tween(fieldStroke, 0.2, { Color = THEME.AccentA })
+    tween(fieldGlow, 0.25, { BackgroundTransparency = 0.55 })
+    tween(keyField, 0.2, { BackgroundColor3 = THEME.FieldHi })
+end)
+keyBox.FocusLost:Connect(function()
+    tween(fieldStroke, 0.2, { Color = THEME.Field })
+    tween(fieldGlow, 0.25, { BackgroundTransparency = 1 })
+    tween(keyField, 0.2, { BackgroundColor3 = THEME.Field })
+end)
 
 -- Status
 local status = new("TextLabel", {
@@ -393,12 +524,19 @@ local status = new("TextLabel", {
     TextColor3 = THEME.Muted,
     TextXAlignment = Enum.TextXAlignment.Left,
     TextTruncate = Enum.TextTruncate.AtEnd,
-    Parent = main,
+    Parent = gKey,
 })
 
 local function setStatus(text, color)
     status.Text = text
-    tween(status, 0.2, { TextColor3 = color or THEME.Muted })
+    -- pesan baru muncul sedikit dari bawah sambil memudar masuk
+    status.TextTransparency = 0.7
+    status.Position = UDim2.fromOffset(20, 157)
+    tween(status, 0.25, {
+        TextColor3 = color or THEME.Muted,
+        TextTransparency = 0,
+        Position = UDim2.fromOffset(20, 152),
+    })
 end
 
 -- Tombol verifikasi
@@ -410,15 +548,32 @@ local verify = new("TextButton", {
     BackgroundTransparency = 1,
     Text = "",
     AutoButtonColor = false,
-    Parent = main,
+    Parent = gVerify,
 })
 
+local verifyGrad = gradient(0)
 local verifyBg = new("Frame", {
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    Position = UDim2.fromScale(0.5, 0.5),
     Size = UDim2.fromScale(1, 1),
     BackgroundColor3 = Color3.new(1, 1, 1),
     BorderSizePixel = 0,
+    ClipsDescendants = true,
     Parent = verify,
-}, { corner(10), gradient(0) })
+}, { corner(12), verifyGrad })
+
+-- Kilau cahaya yang melintas di atas tombol
+local shine = new("Frame", {
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    Position = UDim2.new(-0.2, 0, 0.5, 0),
+    Size = UDim2.new(0, 36, 1.8, 0),
+    Rotation = 20,
+    BackgroundColor3 = Color3.new(1, 1, 1),
+    BackgroundTransparency = 0.78,
+    BorderSizePixel = 0,
+    Visible = false,
+    Parent = verifyBg,
+})
 
 local verifyLabel = new("TextLabel", {
     Size = UDim2.fromScale(1, 1),
@@ -427,18 +582,55 @@ local verifyLabel = new("TextLabel", {
     Text = "Verifikasi Key",
     Font = Enum.Font.GothamBold,
     TextSize = 15,
-    TextColor3 = THEME.Bg, -- gelap agar terbaca di atas warna toska maupun ungu
+    TextColor3 = THEME.Bg, -- gelap agar terbaca di atas warna toska, ungu, maupun merah muda
     Parent = verify,
 })
 
+-- Lingkaran berputar saat key sedang diperiksa
+local spinner = new("Frame", {
+    Position = UDim2.new(0, 16, 0.5, -9),
+    Size = UDim2.fromOffset(18, 18),
+    BackgroundTransparency = 1,
+    Visible = false,
+    ZIndex = 3,
+    Parent = verify,
+}, { new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
+local spinStroke = new("UIStroke", {
+    Thickness = 2.5,
+    Color = THEME.Bg,
+    ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+    Parent = spinner,
+})
+local spinGrad = new("UIGradient", {
+    Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0),
+        NumberSequenceKeypoint.new(0.55, 1),
+        NumberSequenceKeypoint.new(1, 1),
+    }),
+    Parent = spinStroke,
+})
+
+verify.MouseEnter:Connect(function()
+    tween(verifyBg, 0.15, { Size = UDim2.new(1, 6, 1, 3) })
+end)
+verify.MouseLeave:Connect(function()
+    tween(verifyBg, 0.15, { Size = UDim2.fromScale(1, 1) })
+end)
+verify.MouseButton1Down:Connect(function()
+    tween(verifyBg, 0.08, { Size = UDim2.new(1, -6, 1, -4) })
+end)
+verify.MouseButton1Up:Connect(function()
+    tween(verifyBg, 0.12, { Size = UDim2.fromScale(1, 1) })
+end)
+
 -- Pilihan provider
-sectionLabel("Ambil key lewat", 238)
+sectionLabel("Ambil key lewat", 238, gProv)
 
 local providerRow = new("Frame", {
     BackgroundTransparency = 1,
     Position = UDim2.fromOffset(20, 258),
     Size = UDim2.new(1, -40, 0, 44),
-    Parent = main,
+    Parent = gProv,
 }, {
     new("UIListLayout", {
         FillDirection = Enum.FillDirection.Horizontal,
@@ -449,31 +641,60 @@ local providerRow = new("Frame", {
 
 -- Pakai link khusus game jika ada, jika tidak pakai link bawaan
 local providers = (target and target.Providers) or CONFIG.Providers
+local dotColors = { THEME.AccentA, THEME.AccentC, THEME.AccentB }
 
 for i, p in ipairs(providers) do
     local count = #providers
-    local btn = new("TextButton", {
+    local holder = new("Frame", {
         LayoutOrder = i,
         Size = UDim2.new(1 / count, -(10 * (count - 1)) / count, 1, 0),
+        BackgroundTransparency = 1,
+        Parent = providerRow,
+    })
+    local btn = new("TextButton", {
+        Size = UDim2.fromScale(1, 1),
         BackgroundColor3 = THEME.Panel,
         Text = p.Name,
         Font = Enum.Font.GothamBold,
         TextSize = 14,
         TextColor3 = THEME.Text,
         AutoButtonColor = false,
-        Parent = providerRow,
-    }, { corner(10) })
+        ClipsDescendants = true,
+        Parent = holder,
+    }, { corner(12) })
     local s = new("UIStroke", { Thickness = 1.5, Color = THEME.Field, Parent = btn })
 
+    -- titik warna kecil sebagai penanda tiap pilihan
+    new("Frame", {
+        Position = UDim2.new(0, 14, 0.5, -3),
+        Size = UDim2.fromOffset(6, 6),
+        BackgroundColor3 = dotColors[((i - 1) % #dotColors) + 1],
+        BorderSizePixel = 0,
+        Parent = btn,
+    }, { new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
+
     btn.MouseEnter:Connect(function()
-        tween(btn, 0.15, { BackgroundColor3 = THEME.Field })
-        tween(s, 0.15, { Color = THEME.AccentB })
+        tween(btn, 0.18, { BackgroundColor3 = THEME.Field, Position = UDim2.fromOffset(0, -2) })
+        tween(s, 0.18, { Color = THEME.AccentB })
     end)
     btn.MouseLeave:Connect(function()
-        tween(btn, 0.15, { BackgroundColor3 = THEME.Panel })
-        tween(s, 0.15, { Color = THEME.Field })
+        tween(btn, 0.18, { BackgroundColor3 = THEME.Panel, Position = UDim2.fromOffset(0, 0) })
+        tween(s, 0.18, { Color = THEME.Field })
     end)
     btn.MouseButton1Click:Connect(function()
+        -- efek riak dari tengah tombol
+        local ripple = new("Frame", {
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.fromScale(0.5, 0.5),
+            Size = UDim2.fromOffset(0, 0),
+            BackgroundColor3 = THEME.AccentA,
+            BackgroundTransparency = 0.6,
+            BorderSizePixel = 0,
+            Parent = btn,
+        }, { new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
+        tween(ripple, 0.5, { Size = UDim2.fromOffset(260, 260), BackgroundTransparency = 1 })
+        task.delay(0.55, function() ripple:Destroy() end)
+
         if copy(p.Url) then
             setStatus("Link " .. p.Name .. " disalin. Buka di browser untuk mengambil key.", THEME.Good)
         else
@@ -539,8 +760,12 @@ verify.MouseButton1Click:Connect(function()
     end
 end)
 
-close.MouseEnter:Connect(function() tween(close, 0.15, { TextColor3 = THEME.Bad }) end)
-close.MouseLeave:Connect(function() tween(close, 0.15, { TextColor3 = THEME.Muted }) end)
+close.MouseEnter:Connect(function()
+    tween(close, 0.2, { TextColor3 = THEME.Bad, Rotation = 90 })
+end)
+close.MouseLeave:Connect(function()
+    tween(close, 0.2, { TextColor3 = THEME.Muted, Rotation = 0 })
+end)
 close.MouseButton1Click:Connect(function() closeGate() end)
 
 -- Drag
@@ -573,14 +798,49 @@ do
     end)
 end
 
--- Animasi gradasi (garis tepi + tombol)
+-- Animasi (garis tepi, judul, tombol, kilau, putaran, partikel)
+local startT = tick()
 local conn
 conn = RunService.RenderStepped:Connect(function(dt)
     if not gui.Parent then conn:Disconnect() return end
+    local t = tick() - startT
+
     strokeGrad.Rotation = (strokeGrad.Rotation + dt * 90) % 360
-    local shift = (tick() * 0.4) % 2
+    stroke.Transparency = 0.08 + 0.12 * (0.5 + 0.5 * math.sin(t * 2))
+
+    badgeGrad.Rotation = (badgeGrad.Rotation + dt * 60) % 360
+    glowGrad.Rotation = (glowGrad.Rotation + dt * 120) % 360
+
+    titleGrad.Offset = Vector2.new((0.5 + 0.5 * math.sin(t * 0.9)) * 0.5 - 0.25, 0)
+
+    local shift = (t * 0.4) % 2
     local off = shift < 1 and shift or 2 - shift
-    verifyBg:FindFirstChildOfClass("UIGradient").Offset = Vector2.new(off * 0.4 - 0.2, 0)
+    verifyGrad.Offset = Vector2.new(off * 0.4 - 0.2, 0)
+
+    -- kilau melintas, lalu jeda sebentar
+    local phase = (t % 3.6) / 2.2
+    if phase <= 1 then
+        shine.Visible = true
+        shine.Position = UDim2.new(-0.15 + phase * 1.3, 0, 0.5, 0)
+    else
+        shine.Visible = false
+    end
+
+    -- lingkaran berputar hanya saat memeriksa key
+    local loading = verifyLabel.Text:sub(1, 9) == "Memeriksa"
+    spinner.Visible = loading
+    if loading then spinGrad.Rotation = (spinGrad.Rotation + dt * 360) % 360 end
+
+    dot.BackgroundTransparency = 0.5 * (0.5 + 0.5 * math.sin(t * 3))
+
+    for _, pt in ipairs(particles) do
+        pt.y = pt.y - pt.speed * dt
+        if pt.y < 12 then
+            pt.y = H - 12
+            pt.x = math.random(14, math.floor(W) - 14)
+        end
+        pt.f.Position = UDim2.fromOffset(pt.x + math.sin(t * 0.8 + pt.phase) * 8, pt.y)
+    end
 end)
 
 print("[LeachX] siap. GameId=" .. tostring(game.GameId) .. " PlaceId=" .. tostring(game.PlaceId)
