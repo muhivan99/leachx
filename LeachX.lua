@@ -5,7 +5,7 @@
     Pengambilan key lewat Linkvertise atau LootLabs.
 
     Pemakaian di executor:
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/muhivan99/leachx/refs/heads/main/LeachX.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/USERNAME/REPO/main/LeachX.lua"))()
 ]]
 
 ------------------------------------------------------------------
@@ -23,7 +23,7 @@ local CONFIG = {
     --   } }
     -- expires = waktu kedaluwarsa (unix detik, opsional)
     -- games   = batasi key ke GameId/PlaceId tertentu (opsional)
-    KeysUrl = "https://raw.githubusercontent.com/muhivan99/leachx/refs/heads/main/keys.json",
+    KeysUrl = "https://raw.githubusercontent.com/joustingmatch/Ouroboros/main/keys.json",
 
     -- Cadangan tanpa file JSON (tidak disarankan, key terbaca di dalam script)
     StaticKeys = {},
@@ -35,16 +35,12 @@ local CONFIG = {
     Games = {
         [10768941204] = {
             Name = "Steal A DNA",
-            Url = "https://raw.githubusercontent.com/joustingmatch/Ouroboros/main/loader.lua",
-            -- Link pengambilan key khusus game ini (opsional)
+            Url  = "https://raw.githubusercontent.com/joustingmatch/Ouroboros/main/loader.lua",
+            -- Link pengambilan key khusus game ini
             Providers = {
                 { Name = "Linkvertise", Url = "https://link-target.net/3347586/dV15rXm8LmqJ" },
                 { Name = "LootLabs",    Url = "https://loot-link.com/s?pePuaeDT" },
             },
-        },
-        [2222222222] = {
-            Name = "Nama Game Dua",
-            Url  = "https://raw.githubusercontent.com/USERNAME/REPO/main/game2.lua",
         },
     },
 
@@ -56,8 +52,8 @@ local CONFIG = {
     -- Link pengambilan key bawaan. Dipakai oleh game yang tidak punya
     -- Providers sendiri di daftar Games di atas.
     Providers = {
-        { Name = "Linkvertise", Url = "https://link-hub.net/XXXX/leachx" },
-        { Name = "LootLabs",    Url = "https://loot-link.com/s?XXXX" },
+        { Name = "Linkvertise", Url = "https://link-target.net/3347586/dV15rXm8LmqJ" },
+        { Name = "LootLabs",    Url = "https://loot-link.com/s?pePuaeDT" },
     },
 
     SaveFile      = "LeachX_key.txt", -- key tersimpan agar tidak input ulang
@@ -117,6 +113,29 @@ local function getParent()
     local okCore = pcall(function() return CoreGui.Name end)
     if okCore then return CoreGui end
     return Players.LocalPlayer:WaitForChild("PlayerGui")
+end
+
+-- Coba beberapa tempat sampai ada yang berhasil (executor berbeda,
+-- dukungan gethui/CoreGui berbeda).
+local function attach(g)
+    local candidates = {}
+    pcall(function()
+        if gethui then table.insert(candidates, gethui()) end
+    end)
+    table.insert(candidates, CoreGui)
+    local lp = Players.LocalPlayer
+    if lp then
+        local pg = lp:FindFirstChildOfClass("PlayerGui") or lp:WaitForChild("PlayerGui", 5)
+        if pg then table.insert(candidates, pg) end
+    end
+    for _, p in ipairs(candidates) do
+        local ok = pcall(function() g.Parent = p end)
+        if ok and g.Parent == p then
+            print("[LeachX] panel dipasang di: " .. p:GetFullName())
+            return true
+        end
+    end
+    return false
 end
 
 local function copy(text)
@@ -219,7 +238,9 @@ local gui = new("ScreenGui", {
     IgnoreGuiInset = true,
 })
 if syn and syn.protect_gui then pcall(syn.protect_gui, gui) end
-gui.Parent = getParent()
+if not attach(gui) then
+    warn("[LeachX] Gagal memasang panel ke layar. Executor ini mungkin tidak didukung.")
+end
 
 -- Layar redup di belakang
 local dim = new("Frame", {
@@ -533,3 +554,6 @@ conn = RunService.RenderStepped:Connect(function(dt)
     local off = shift < 1 and shift or 2 - shift
     verify:FindFirstChildOfClass("UIGradient").Offset = Vector2.new(off * 0.4 - 0.2, 0)
 end)
+
+print("[LeachX] siap. GameId=" .. tostring(game.GameId) .. " PlaceId=" .. tostring(game.PlaceId)
+    .. " game=" .. (target and target.Name or "tidak dikenal"))
