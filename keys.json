@@ -1,6 +1,6 @@
 {
   "keys": {
-    "LEACHX-296B-MEHK-ZMZQ": { "games": [[10768941204], "name": "Steal A DNA" },
+    "LEACHX-296B-MEHK-ZMZQ": { "games": [10768941204], "name": "Steal A DNA" },
     "LEACHX-3E3W-9NR3-2RT8": { "games": [10769798178], "name": "Make Rug" },
     "LEACHX-43RV-J5FC-L72B": { "games": [], "name": "" },
     "LEACHX-457E-J8X4-H2BE": { "games": [], "name": "" },
@@ -50,6 +50,6 @@
     "LEACHX-YTJ3-X7AB-UTMG": { "games": [], "name": "" },
     "LEACHX-ZJHE-QBAL-BT6Y": { "games": [], "name": "" },
     "LEACHX-ZQFB-5QEF-NZR9": { "games": [], "name": "" }
-  }
+  
   }
 }
