@@ -5,7 +5,7 @@
     Pengambilan key lewat Linkvertise atau LootLabs.
 
     Pemakaian di executor:
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/USERNAME/REPO/main/LeachX.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/muhivan99/leachx/refs/heads/main/LeachX.lua?t=" .. os.time()))()
 ]]
 
 ------------------------------------------------------------------
