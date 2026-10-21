@@ -56,7 +56,9 @@ local CONFIG = {
         { Name = "LootLabs",    Url = "https://loot-link.com/s?pePuaeDT" },
     },
 
-    SaveFile      = "LeachX_key.txt", -- key tersimpan agar tidak input ulang
+    -- File sisa dari versi lama yang menyimpan key. Dihapus otomatis agar
+    -- key tidak muncul lagi di kolom input.
+    OldSaveFile   = "LeachX_key.txt",
 }
 
 ------------------------------------------------------------------
@@ -147,17 +149,12 @@ local function copy(text)
     return false
 end
 
-local function readSaved()
-    if isfile and readfile and isfile(CONFIG.SaveFile) then
-        local ok, data = pcall(readfile, CONFIG.SaveFile)
-        if ok then return (data:gsub("%s+", "")) end
+-- Key tidak disimpan. Hapus file lama (jika ada) dari versi sebelumnya.
+pcall(function()
+    if isfile and delfile and isfile(CONFIG.OldSaveFile) then
+        delfile(CONFIG.OldSaveFile)
     end
-    return ""
-end
-
-local function writeSaved(key)
-    if writefile then pcall(writefile, CONFIG.SaveFile, key) end
-end
+end)
 
 ------------------------------------------------------------------
 -- Validasi key
@@ -359,7 +356,7 @@ local keyBox = new("TextBox", {
     Font = Enum.Font.GothamMedium,
     PlaceholderText = "Tempel key di sini",
     PlaceholderColor3 = THEME.Muted,
-    Text = readSaved(),
+    Text = "",
     TextColor3 = THEME.Text,
     TextSize = 14,
     ClearTextOnFocus = false,
@@ -390,17 +387,34 @@ local function setStatus(text, color)
 end
 
 -- Tombol verifikasi
+-- Gradasi dipasang di lapisan latar terpisah. Kalau dipasang di tombolnya,
+-- gradasi ikut mewarnai teks dan tulisannya jadi tidak terlihat.
 local verify = new("TextButton", {
     Position = UDim2.fromOffset(20, 178),
     Size = UDim2.new(1, -40, 0, 44),
+    BackgroundTransparency = 1,
+    Text = "",
+    AutoButtonColor = false,
+    Parent = main,
+})
+
+local verifyBg = new("Frame", {
+    Size = UDim2.fromScale(1, 1),
     BackgroundColor3 = Color3.new(1, 1, 1),
+    BorderSizePixel = 0,
+    Parent = verify,
+}, { corner(10), gradient(0) })
+
+local verifyLabel = new("TextLabel", {
+    Size = UDim2.fromScale(1, 1),
+    BackgroundTransparency = 1,
+    ZIndex = 2,
     Text = "Verifikasi Key",
     Font = Enum.Font.GothamBold,
     TextSize = 15,
-    TextColor3 = Color3.new(1, 1, 1),
-    AutoButtonColor = false,
-    Parent = main,
-}, { corner(10), gradient(0) })
+    TextColor3 = THEME.Bg, -- gelap agar terbaca di atas warna toska maupun ungu
+    Parent = verify,
+})
 
 -- Pilihan provider
 sectionLabel("Ambil key lewat", 238)
@@ -482,26 +496,25 @@ verify.MouseButton1Click:Connect(function()
     local key = cleanKey(keyBox.Text)
 
     if not target then
-        verify.Text = "Verifikasi Key"
+        verifyLabel.Text = "Verifikasi Key"
         setStatus("Game ini belum didukung LeachX.", THEME.Bad)
         shake()
         busy = false
         return
     end
 
-    verify.Text = "Memeriksa..."
+    verifyLabel.Text = "Memeriksa..."
     setStatus("Memeriksa key...", THEME.Muted)
 
     local ok, msg = checkKey(key)
 
     if ok then
-        writeSaved(key)
-        verify.Text = "Berhasil"
+        verifyLabel.Text = "Berhasil"
         setStatus("Key valid. Memuat script...", THEME.Good)
         task.wait(0.6)
         closeGate(launchMain)
     else
-        verify.Text = "Verifikasi Key"
+        verifyLabel.Text = "Verifikasi Key"
         setStatus(msg or "Key tidak valid", THEME.Bad)
         tween(fieldStroke, 0.2, { Color = THEME.Bad })
         shake()
@@ -552,7 +565,7 @@ conn = RunService.RenderStepped:Connect(function(dt)
     strokeGrad.Rotation = (strokeGrad.Rotation + dt * 90) % 360
     local shift = (tick() * 0.4) % 2
     local off = shift < 1 and shift or 2 - shift
-    verify:FindFirstChildOfClass("UIGradient").Offset = Vector2.new(off * 0.4 - 0.2, 0)
+    verifyBg:FindFirstChildOfClass("UIGradient").Offset = Vector2.new(off * 0.4 - 0.2, 0)
 end)
 
 print("[LeachX] siap. GameId=" .. tostring(game.GameId) .. " PlaceId=" .. tostring(game.PlaceId)
