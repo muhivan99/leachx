@@ -23,7 +23,7 @@ local CONFIG = {
     --   } }
     -- expires = waktu kedaluwarsa (unix detik, opsional)
     -- games   = batasi key ke GameId/PlaceId tertentu (opsional)
-    KeysUrl = "https://raw.githubusercontent.com/muhivan99/leachx/refs/heads/main/keys.json",
+    KeysUrl = "https://raw.githubusercontent.com/USERNAME/REPO/main/keys.json",
 
     -- Cadangan tanpa file JSON (tidak disarankan, key terbaca di dalam script)
     StaticKeys = {},
@@ -33,9 +33,14 @@ local CONFIG = {
     -- GameId lebih disarankan karena berlaku untuk semua place di dalam game itu.
     -- Cara cari ID: jalankan  print(game.GameId, game.PlaceId)  di game tujuan.
     Games = {
-        [10768941204] = {
-            Name = "Steal A DNA",
-            Url  = "loadstring(game:HttpGet("https://raw.githubusercontent.com/joustingmatch/Ouroboros/main/loader.lua"))()",
+        [1111111111] = {
+            Name = "Nama Game Satu",
+            Url  = "https://raw.githubusercontent.com/USERNAME/REPO/main/game1.lua",
+            -- Link pengambilan key khusus game ini (opsional)
+            Providers = {
+                { Name = "Linkvertise", Url = "https://link-hub.net/1111/game-satu" },
+                { Name = "LootLabs",    Url = "https://loot-link.com/s?game-satu" },
+            },
         },
         [2222222222] = {
             Name = "Nama Game Dua",
@@ -48,7 +53,8 @@ local CONFIG = {
     Universal = nil,
     -- Universal = { Name = "Universal", Url = "https://raw.githubusercontent.com/USERNAME/REPO/main/universal.lua" },
 
-    -- Link pengambilan key (buat di dashboard Linkvertise dan LootLabs)
+    -- Link pengambilan key bawaan. Dipakai oleh game yang tidak punya
+    -- Providers sendiri di daftar Games di atas.
     Providers = {
         { Name = "Linkvertise", Url = "https://link-hub.net/XXXX/leachx" },
         { Name = "LootLabs",    Url = "https://loot-link.com/s?XXXX" },
@@ -391,8 +397,11 @@ local providerRow = new("Frame", {
     }),
 })
 
-for i, p in ipairs(CONFIG.Providers) do
-    local count = #CONFIG.Providers
+-- Pakai link khusus game jika ada, jika tidak pakai link bawaan
+local providers = (target and target.Providers) or CONFIG.Providers
+
+for i, p in ipairs(providers) do
+    local count = #providers
     local btn = new("TextButton", {
         LayoutOrder = i,
         Size = UDim2.new(1 / count, -(10 * (count - 1)) / count, 1, 0),
