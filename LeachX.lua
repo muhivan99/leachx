@@ -35,7 +35,7 @@ local CONFIG = {
     Games = {
         [10768941204] = {
             Name = "Steal A DNA",
-            Url  = "loadstring(game:HttpGet("https://raw.githubusercontent.com/joustingmatch/Ouroboros/main/loader.lua"))()",
+            Url = "https://raw.githubusercontent.com/joustingmatch/Ouroboros/main/loader.lua",
             -- Link pengambilan key khusus game ini (opsional)
             Providers = {
                 { Name = "Linkvertise", Url = "https://link-target.net/3347586/dV15rXm8LmqJ" },
