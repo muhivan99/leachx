@@ -1,0 +1,7 @@
+{
+  "keys": {
+    "LEACHX-ABCD-1234": { "expires": 1795000000 },
+    "LEACHX-WXYZ-9876": { "expires": 1795000000, "games": [1111111111] },
+    "LEACHX-FOREVER-01": {}
+  }
+}
