@@ -33,23 +33,16 @@ local CONFIG = {
     -- GameId lebih disarankan karena berlaku untuk semua place di dalam game itu.
     -- Cara cari ID: jalankan  print(game.GameId, game.PlaceId)  di game tujuan.
     Games = {
-    [10768941204] = {
-        Name = "Steal A DNA",
-        Url  = "https://raw.githubusercontent.com/joustingmatch/Ouroboros/main/loader.lua",
-        Providers = {
-            { Name = "Linkvertise", Url = "https://link-target.net/3347586/dV15rXm8LmqJ" },
-            { Name = "LootLabs",    Url = "https://loot-link.com/s?pePuaeDT" },
+        [10768941204] = {
+            Name = "Steal A DNA",
+            Url  = "https://raw.githubusercontent.com/joustingmatch/Ouroboros/main/loader.lua",
+            -- Link pengambilan key khusus game ini
+            Providers = {
+                { Name = "Linkvertise", Url = "https://link-target.net/3347586/dV15rXm8LmqJ" },
+                { Name = "LootLabs",    Url = "https://loot-link.com/s?pePuaeDT" },
+            },
         },
     },
-    [10769798178] = {
-        Name = "Make Rug",
-        Url  = "https://raw.githubusercontent.com/joustingmatch/Ouroboros/main/loader.lua",
-        Providers = {
-            { Name = "Linkvertise", Url = "https://link-center.net/3347586/ROh9vMondKOG" },
-            { Name = "LootLabs",    Url = "https://lootdest.org/s?45EIIOA5" },
-        },
-    },
-},
 
     -- Dipakai jika game tidak ada di daftar di atas. Isi nil agar game lain
     -- ditolak dengan pesan "belum didukung".
@@ -191,8 +184,16 @@ local function checkKey(key)
         end)
         if not ok then return false, "Daftar key tidak bisa diambil" end
 
+        -- Buang karakter tak terlihat di awal file (BOM) dan spasi di ujung
+        res = tostring(res)
+        res = (res:gsub("^\239\187\191", ""))
+        res = (res:gsub("^%s+", ""))
+        res = (res:gsub("%s+$", ""))
+
         local okJson, data = pcall(function() return HttpService:JSONDecode(res) end)
         if not okJson or type(data) ~= "table" or type(data.keys) ~= "table" then
+            warn("[LeachX] Isi daftar key tidak terbaca. Awal respons: " .. res:sub(1, 120))
+            if not okJson then warn("[LeachX] Galat JSON: " .. tostring(data)) end
             return false, "Format daftar key salah"
         end
         for k, v in pairs(data.keys) do
