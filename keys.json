@@ -1,6 +1,6 @@
 {
   "keys": {
-    "GAME1-LV-A1B2C3": { "games": [10768941204], "source": "linkvertise", "expires": 1795000000 },
+    "GAME1-LV-A1B2C3": { "games": [10768941204], "source": "linkvertise", "expires": 1795000000 }, -- Games Steal A DNA
     "GAME1-LL-D4E5F6": { "games": [1111111111], "source": "lootlabs",    "expires": 1795000000 },
     "GAME2-LV-G7H8J9": { "games": [2222222222], "source": "linkvertise", "expires": 1795000000 },
     "GAME2-LL-K1L2M3": { "games": [2222222222], "source": "lootlabs",    "expires": 1795000000 },
