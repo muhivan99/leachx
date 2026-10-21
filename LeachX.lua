@@ -23,7 +23,7 @@ local CONFIG = {
     --   } }
     -- expires = waktu kedaluwarsa (unix detik, opsional)
     -- games   = batasi key ke GameId/PlaceId tertentu (opsional)
-    KeysUrl = "https://raw.githubusercontent.com/USERNAME/REPO/main/keys.json",
+    KeysUrl = "https://raw.githubusercontent.com/muhivan99/leachx/refs/heads/main/keys.json",
 
     -- Cadangan tanpa file JSON (tidak disarankan, key terbaca di dalam script)
     StaticKeys = {},
@@ -33,13 +33,13 @@ local CONFIG = {
     -- GameId lebih disarankan karena berlaku untuk semua place di dalam game itu.
     -- Cara cari ID: jalankan  print(game.GameId, game.PlaceId)  di game tujuan.
     Games = {
-        [1111111111] = {
-            Name = "Nama Game Satu",
-            Url  = "https://raw.githubusercontent.com/USERNAME/REPO/main/game1.lua",
+        [10768941204] = {
+            Name = "Steal A DNA",
+            Url  = "loadstring(game:HttpGet("https://raw.githubusercontent.com/joustingmatch/Ouroboros/main/loader.lua"))()",
             -- Link pengambilan key khusus game ini (opsional)
             Providers = {
-                { Name = "Linkvertise", Url = "https://link-hub.net/1111/game-satu" },
-                { Name = "LootLabs",    Url = "https://loot-link.com/s?game-satu" },
+                { Name = "Linkvertise", Url = "https://link-target.net/3347586/dV15rXm8LmqJ" },
+                { Name = "LootLabs",    Url = "https://loot-link.com/s?pePuaeDT" },
             },
         },
         [2222222222] = {
