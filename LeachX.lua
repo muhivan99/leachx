@@ -33,9 +33,9 @@ local CONFIG = {
     -- GameId lebih disarankan karena berlaku untuk semua place di dalam game itu.
     -- Cara cari ID: jalankan  print(game.GameId, game.PlaceId)  di game tujuan.
     Games = {
-        [1111111111] = {
-            Name = "Nama Game Satu",
-            Url  = "https://raw.githubusercontent.com/USERNAME/REPO/main/game1.lua",
+        [10768941204] = {
+            Name = "Steal A DNA",
+            Url  = "loadstring(game:HttpGet("https://raw.githubusercontent.com/joustingmatch/Ouroboros/main/loader.lua"))()",
         },
         [2222222222] = {
             Name = "Nama Game Dua",
