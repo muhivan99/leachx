@@ -35,8 +35,8 @@ local CONFIG = {
         Name = "ENTRENCHED WW1",
         Url  = "https://raw.githubusercontent.com/Aekkalak667/RavenHub-Release/main/payloads/entrenched.lua",
         Providers = {
-            { Name = "Linkvertise", Url = "https://link-center.net/3347586/ROh9vMondKOG" },
-            { Name = "LootLabs",    Url = "https://loot-link.com/s?jpS7oKR7" },
+            { Name = "Linkvertise", Url = "https://link-target.net/3347586/xpqxj0Mt1I8L" },
+            { Name = "LootLabs",    Url = "https://loot-link.com/s?7lFSq1Ts" },
         },
     },
 },
