@@ -1,9 +1,4 @@
 --[[
-    LeachX Key Gateway
-    Key system untuk executor (Delta, Potassium, dll) dengan banyak game.
-    Key dibuat dan dikelola sendiri lewat file JSON (lihat KeysUrl di bawah).
-    Pengambilan key lewat Linkvertise atau LootLabs.
-
     Pemakaian di executor:
         loadstring(game:HttpGet("https://raw.githubusercontent.com/muhivan99/leachx/refs/heads/main/LeachX.lua?t=" .. os.time()))()
 ]]
@@ -14,24 +9,11 @@
 local CONFIG = {
     Name            = "LeachX",
     Version         = "1.0.0",
-
-    -- Daftar key (file JSON milikmu, misalnya di GitHub raw). Format:
-    --   { "keys": {
-    --       "LEACHX-ABCD-1234": { "expires": 1795000000 },
-    --       "LEACHX-WXYZ-9876": { "expires": 1795000000, "games": [1111111111] },
-    --       "LEACHX-FOREVER-01": {}
-    --   } }
-    -- expires = waktu kedaluwarsa (unix detik, opsional)
-    -- games   = batasi key ke GameId/PlaceId tertentu (opsional)
+    
     KeysUrl = "https://raw.githubusercontent.com/muhivan99/leachx/refs/heads/main/keys.json",
-
-    -- Cadangan tanpa file JSON (tidak disarankan, key terbaca di dalam script)
     StaticKeys = {},
 
-    -- Daftar game. Kunci = GameId (universe) atau PlaceId, Url = link script
-    -- mentah (raw) untuk game tersebut.
-    -- GameId lebih disarankan karena berlaku untuk semua place di dalam game itu.
-    -- Cara cari ID: jalankan  print(game.GameId, game.PlaceId)  di game tujuan.
+
     Games = {
     [10768941204] = {
         Name = "Steal A DNA",
