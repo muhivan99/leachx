@@ -31,6 +31,14 @@ local CONFIG = {
             { Name = "LootLabs",    Url = "https://loot-link.com/s?jpS7oKR7" },
         },
     },
+    [128159293] = {
+        Name = "ENTRENCHED WW1",
+        Url  = "https://raw.githubusercontent.com/Aekkalak667/RavenHub-Release/main/payloads/entrenched.lua",
+        Providers = {
+            { Name = "Linkvertise", Url = "https://link-center.net/3347586/ROh9vMondKOG" },
+            { Name = "LootLabs",    Url = "https://loot-link.com/s?jpS7oKR7" },
+        },
+    },
 },
 
     -- Dipakai jika game tidak ada di daftar di atas. Isi nil agar game lain
