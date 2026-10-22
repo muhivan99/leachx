@@ -20,7 +20,7 @@ local CONFIG = {
         Url  = "https://raw.githubusercontent.com/joustingmatch/Ouroboros/main/loader.lua",
         Providers = {
             { Name = "Linkvertise", Url = "https://link-target.net/3347586/dV15rXm8LmqJ" },
-            { Name = "LootLabs",    Url = "https://loot-link.com/s?pePuaeDT" },
+            { Name = "LootLabs",    Url = "https://lootdest.org/s?q8RhM8MV" },
         },
     },
     [10769798178] = {
@@ -28,7 +28,7 @@ local CONFIG = {
         Url  = "https://raw.githubusercontent.com/joustingmatch/Ouroboros/main/loader.lua",
         Providers = {
             { Name = "Linkvertise", Url = "https://link-center.net/3347586/ROh9vMondKOG" },
-            { Name = "LootLabs",    Url = "https://lootdest.org/s?45EIIOA5" },
+            { Name = "LootLabs",    Url = "https://loot-link.com/s?jpS7oKR7" },
         },
     },
 },
