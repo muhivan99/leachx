@@ -39,6 +39,14 @@ local CONFIG = {
             { Name = "LootLabs",    Url = "https://loot-link.com/s?7lFSq1Ts" },
         },
     },
+    [10563114921] = {
+        Name = "Steal An Egg",
+        Url  = "https://rifton.top/loader.lua",
+        Providers = {
+            { Name = "Linkvertise", Url = "https://direct-link.net/3347586/v6DVwtYDHFJp" },
+            { Name = "LootLabs",    Url = "https://loot-link.com/s?yAvBqecO" },
+        },
+    },
 },
 
     -- Dipakai jika game tidak ada di daftar di atas. Isi nil agar game lain
