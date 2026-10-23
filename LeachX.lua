@@ -51,8 +51,10 @@ local CONFIG = {
 
     -- Dipakai jika game tidak ada di daftar di atas. Isi nil agar game lain
     -- ditolak dengan pesan "belum didukung".
-    Universal = nil,
-    -- Universal = { Name = "Universal", Url = "https://raw.githubusercontent.com/USERNAME/REPO/main/universal.lua" },
+     Universal = {
+       Name = "Universal Aimbot",
+       Url = "https://raw.githubusercontent.com/muhivan99/leachx/refs/heads/main/LeachX_Aimbot.lua",
+   },
 
     -- Link pengambilan key bawaan. Dipakai oleh game yang tidak punya
     -- Providers sendiri di daftar Games di atas.
