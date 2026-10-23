@@ -55,15 +55,15 @@ local CONFIG = {
        Name = "Universal Aimbot",
        Url = "https://raw.githubusercontent.com/muhivan99/leachx/refs/heads/main/LeachX_Aimbot.lua",
         Providers = {
-            { Name = "Linkvertise", Url = "https://direct-link.net/3347586/v6DVwtYDHFJp" },
-            { Name = "LootLabs",    Url = "https://loot-link.com/s?yAvBqecO" }
+            { Name = "Linkvertise", Url = "https://link-target.net/3347586/7F9FgfvvljfJ" },
+            { Name = "LootLabs",    Url = "https://loot-link.com/s?yAvBqecO" },
    },
 
     -- Link pengambilan key bawaan. Dipakai oleh game yang tidak punya
     -- Providers sendiri di daftar Games di atas.
     Providers = {
         { Name = "Linkvertise", Url = "https://link-target.net/3347586/dV15rXm8LmqJ" },
-        { Name = "LootLabs",    Url = "https://loot-link.com/s?pePuaeDT" },
+        { Name = "LootLabs",    Url = "https://loot-link.com/s?0T4ZkgXV" },
     },
 
     -- File sisa dari versi lama yang menyimpan key. Dihapus otomatis agar
