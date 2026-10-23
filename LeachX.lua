@@ -54,6 +54,9 @@ local CONFIG = {
      Universal = {
        Name = "Universal Aimbot",
        Url = "https://raw.githubusercontent.com/muhivan99/leachx/refs/heads/main/LeachX_Aimbot.lua",
+        Providers = {
+            { Name = "Linkvertise", Url = "https://direct-link.net/3347586/v6DVwtYDHFJp" },
+            { Name = "LootLabs",    Url = "https://loot-link.com/s?yAvBqecO" }
    },
 
     -- Link pengambilan key bawaan. Dipakai oleh game yang tidak punya
